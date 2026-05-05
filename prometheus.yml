@@ -1,0 +1,7 @@
+scrape_configs:
+  - job_name: 'calculator-app'
+    static_configs:
+      - targets: ['localhost:9464']   # OTel Prometheus exporter
+  - job_name: 'jenkins'
+    static_configs:
+      - targets: ['localhost:8080']   

@@ -1,44 +1,36 @@
-node {
-   def mvnHome = tool 'M3'
-
-   stage('Checkout Code') { 
-      git 'https://github.com/maping/java-maven-calculator-web-app.git'
-   }
-   stage('JUnit Test') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' clean test"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" clean test/)
-      }
-   }
-   stage('Integration Test') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' integration-test"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" integration-test/)
-      }
-   }
- /*
-   stage('Performance Test') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' cargo:start verify cargo:stop"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" cargo:start verify cargo:stop/)
-      }
-   }
-  */
-  stage('Performance Test') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' verify"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" verify/)
-      }
-   }
-   stage('Deploy') {
-      timeout(time: 10, unit: 'MINUTES') {
-           input message: 'Deploy this web app to production ?'
-      }
-      echo 'Deploy...'
-   }
+pipeline {
+    agent any
+    tools {
+        maven 'Maven'
+    }
+    stages {
+        stage('Clone') {
+            steps {
+                echo 'Cloning repository...'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+                sh 'cp target/calculator.war C:/Users/Emaan/Downloads/apache-tomcat-11.0.21-windows-x64/apache-tomcat-11.0.21/webapps/'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
 }
-   
