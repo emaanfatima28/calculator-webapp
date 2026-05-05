@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Deploy to Tomcat') {
             steps {
-                bat 'copy target\\calculator.war C:\\Users\\Emaan\\Downloads\\apache-tomcat-11.0.21-windows-x64\\apache-tomcat-11.0.21\\webapps\\'
+                bat 'copy target\\calculator.war C:\\Users\\Emaan\\Downloads\\apache-tomcat-9.0.117\\webapps\\'
             }
         }
     }
